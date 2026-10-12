@@ -1,5 +1,11 @@
 """나만의 프롬프트 관리 - 콘솔 프로그램"""
 
+import json
+from pathlib import Path
+
+DATA_FILE = Path("data.json")
+EXPORT_DIR = Path("exports")
+
 CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
 
 # 기본 프롬프트 데이터 (이전 미션에서 작성한 프롬프트로 교체해서 사용하세요)
@@ -174,6 +180,25 @@ def show_favorites():
     print(f"\n총 {len(found)}개의 즐겨찾기")
 
 
+def save_json():
+    DATA_FILE.write_text(json.dumps(prompts, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"{len(prompts)}개의 프롬프트를 {DATA_FILE}에 저장했습니다.")
+
+
+def load_json():
+    if not DATA_FILE.exists():
+        print(f"{DATA_FILE} 파일이 없습니다. 먼저 저장해주세요.")
+        return
+    try:
+        loaded = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        print("JSON 파일 형식이 올바르지 않습니다.")
+        return
+    prompts.clear()
+    prompts.extend(loaded)
+    print(f"{len(prompts)}개의 프롬프트를 불러왔습니다.")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -183,6 +208,9 @@ def show_menu():
     print("5. 프롬프트 상세 보기")
     print("6. 즐겨찾기 관리")
     print("7. 즐겨찾기 목록")
+    print("8. JSON 저장")
+    print("9. JSON 불러오기")
+    print("10. Markdown 내보내기")
     print("0. 종료")
 
 
@@ -207,8 +235,12 @@ def main():
             toggle_favorite()
         elif choice == "7":
             show_favorites()
+        elif choice == "8":
+            save_json()
+        elif choice == "9":
+            load_json()
         else:
-            print("잘못된 입력입니다. 0~7 사이의 번호를 입력하세요.")
+            print("잘못된 입력입니다. 메뉴에 있는의 번호를 입력하세요.")
 
 
 if __name__ == "__main__":
