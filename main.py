@@ -162,6 +162,16 @@ def toggle_favorite():
     print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에서 {action}했습니다!")
 
 
+def show_favorites():
+    print("\n=== 즐겨찾기 목록 ===")
+    found = [p for p in prompts if p["favorite"]]
+    if not found:
+        print("즐겨찾기한 프롬프트가 없습니다.")
+        return
+    print_prompts(found)
+    print(f"\n총 {len(found)}개의 즐겨찾기")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
