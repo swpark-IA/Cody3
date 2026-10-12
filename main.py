@@ -112,6 +112,21 @@ def show_by_category():
     print(f"\n총 {len(found)}개의 프롬프트")
 
 
+def search_prompt():
+    print("\n=== 프롬프트 검색 ===")
+    keyword = get_input("검색어: ").lower()
+    found = [
+        p for p in prompts
+        if keyword in p["title"].lower() or keyword in p["content"].lower()
+    ]
+    if not found:
+        print("검색 결과가 없습니다.")
+        return
+    print("\n검색 결과:")
+    print_prompts(found)
+    print(f"\n{len(found)}개의 프롬프트를 찾았습니다.")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -137,7 +152,9 @@ def main():
             show_list()
         elif choice == "3":
             show_by_category()
-        elif choice in ("4", "5", "6", "7"):
+        elif choice == "4":
+            search_prompt()
+        elif choice in ("5", "6", "7"):
             print("아직 구현되지 않은 기능입니다.")
         else:
             print("잘못된 입력입니다. 0~7 사이의 번호를 입력하세요.")
