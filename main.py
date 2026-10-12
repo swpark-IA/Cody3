@@ -15,24 +15,28 @@ prompts = [
         "content": "당신은 10년 경력의 전문 블로거입니다. 주어진 주제에 대해 SEO에 최적화된 블로그 글을 작성해주세요. 서론, 본론, 결론 구조를 갖추고, 독자의 관심을 끄는 제목을 3개 제안해주세요.",
         "category": "텍스트 생성",
         "favorite": True,
+        "views": 0,
     },
     {
         "title": "제품 썸네일 생성",
         "content": "다음 제품의 매력적인 썸네일 이미지를 생성해주세요. 밝은 배경, 제품 중심 구도, 상단에 짧은 문구 공간을 확보해주세요.",
         "category": "이미지 생성",
         "favorite": False,
+        "views": 0,
     },
     {
         "title": "IT 컨설턴트 페르소나",
         "content": "당신은 15년 경력의 IT 컨설턴트입니다. 비전문가도 이해할 수 있게 쉬운 비유로 설명하고, 항상 장단점과 권장안을 함께 제시해주세요.",
         "category": "페르소나",
         "favorite": False,
+        "views": 0,
     },
     {
         "title": "뉴스 요약 프롬프트",
         "content": "다음 뉴스 기사를 3줄로 요약하고, 핵심 키워드 5개와 독자가 취할 행동 1가지를 정리해주세요.",
         "category": "자동화",
         "favorite": False,
+        "views": 0,
     },
 ]
 
@@ -77,7 +81,13 @@ def add_prompt():
     while category is None:
         category = select_category()
     prompts.append(
-        {"title": title, "content": content, "category": category, "favorite": False}
+        {
+            "title": title,
+            "content": content,
+            "category": category,
+            "favorite": False,
+            "views": 0,
+        }
     )
     print("프롬프트가 추가되었습니다!")
 
@@ -142,11 +152,13 @@ def show_detail():
     if number is None:
         return
     prompt = prompts[number - 1]
+    prompt["views"] = prompt.get("views", 0) + 1
     line = "─" * 28
     print(f"\n{line}")
     print(f"제목: {prompt['title']}")
     print(f"카테고리: {prompt['category']}")
     print(f"즐겨찾기: {'⭐' if prompt['favorite'] else '-'}")
+    print(f"조회수: {prompt['views']}")
     print(line)
     print("내용:")
     print(prompt["content"])
@@ -218,6 +230,60 @@ def export_markdown():
     print(f"{len(grouped)}개의 Markdown 파일을 {EXPORT_DIR}/ 에 내보냈습니다.")
 
 
+def edit_prompt():
+    print("\n=== 프롬프트 수정 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    print_prompts(prompts)
+    number = get_number("수정할 번호: ", len(prompts))
+    if number is None:
+        return
+    prompt = prompts[number - 1]
+    print("(변경하지 않으려면 Enter)")
+    title = input(f"제목 [{prompt['title']}]: ").strip()
+    content = input("내용 (비우면 유지): ").strip()
+    change_category = input(f"카테고리 [{prompt['category']}] 변경? (y/N): ").strip().lower()
+    if title:
+        prompt["title"] = title
+    if content:
+        prompt["content"] = content
+    if change_category == "y":
+        category = None
+        while category is None:
+            category = select_category()
+        prompt["category"] = category
+    print("프롬프트가 수정되었습니다!")
+
+
+def delete_prompt():
+    print("\n=== 프롬프트 삭제 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    print_prompts(prompts)
+    number = get_number("삭제할 번호: ", len(prompts))
+    if number is None:
+        return
+    title = prompts[number - 1]["title"]
+    if input(f"'{title}'을(를) 삭제할까요? (y/N): ").strip().lower() != "y":
+        print("삭제를 취소했습니다.")
+        return
+    prompts.pop(number - 1)
+    print("프롬프트가 삭제되었습니다.")
+
+
+def show_top():
+    print("\n=== 조회수 Top 목록 ===")
+    viewed = [p for p in prompts if p.get("views", 0) > 0]
+    if not viewed:
+        print("아직 조회된 프롬프트가 없습니다.")
+        return
+    ranked = sorted(viewed, key=lambda p: p["views"], reverse=True)[:5]
+    for i, p in enumerate(ranked, 1):
+        print(f"{i}. [{p['category']}] {p['title']} (조회 {p['views']}회)")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -230,6 +296,9 @@ def show_menu():
     print("8. JSON 저장")
     print("9. JSON 불러오기")
     print("10. Markdown 내보내기")
+    print("11. 프롬프트 수정")
+    print("12. 프롬프트 삭제")
+    print("13. 조회수 Top 목록")
     print("0. 종료")
 
 
@@ -260,6 +329,12 @@ def main():
             load_json()
         elif choice == "10":
             export_markdown()
+        elif choice == "11":
+            edit_prompt()
+        elif choice == "12":
+            delete_prompt()
+        elif choice == "13":
+            show_top()
         else:
             print("잘못된 입력입니다. 메뉴에 있는의 번호를 입력하세요.")
 
