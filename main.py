@@ -147,6 +147,21 @@ def show_detail():
     print(line)
 
 
+def toggle_favorite():
+    print("\n=== 즐겨찾기 관리 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    print_prompts(prompts)
+    number = get_number("프롬프트 번호 입력: ", len(prompts))
+    if number is None:
+        return
+    prompt = prompts[number - 1]
+    prompt["favorite"] = not prompt["favorite"]
+    action = "추가" if prompt["favorite"] else "해제"
+    print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에서 {action}했습니다!")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -176,7 +191,9 @@ def main():
             search_prompt()
         elif choice == "5":
             show_detail()
-        elif choice in ("6", "7"):
+        elif choice == "6":
+            toggle_favorite()
+        elif choice == "7":
             print("아직 구현되지 않은 기능입니다.")
         else:
             print("잘못된 입력입니다. 0~7 사이의 번호를 입력하세요.")
