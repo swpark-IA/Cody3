@@ -204,7 +204,7 @@ def main():
         elif choice == "6":
             toggle_favorite()
         elif choice == "7":
-            print("아직 구현되지 않은 기능입니다.")
+            show_favorites()
         else:
             print("잘못된 입력입니다. 0~7 사이의 번호를 입력하세요.")
 
