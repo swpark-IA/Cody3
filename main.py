@@ -230,6 +230,60 @@ def export_markdown():
     print(f"{len(grouped)}개의 Markdown 파일을 {EXPORT_DIR}/ 에 내보냈습니다.")
 
 
+def edit_prompt():
+    print("\n=== 프롬프트 수정 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    print_prompts(prompts)
+    number = get_number("수정할 번호: ", len(prompts))
+    if number is None:
+        return
+    prompt = prompts[number - 1]
+    print("(변경하지 않으려면 Enter)")
+    title = input(f"제목 [{prompt['title']}]: ").strip()
+    content = input("내용 (비우면 유지): ").strip()
+    change_category = input(f"카테고리 [{prompt['category']}] 변경? (y/N): ").strip().lower()
+    if title:
+        prompt["title"] = title
+    if content:
+        prompt["content"] = content
+    if change_category == "y":
+        category = None
+        while category is None:
+            category = select_category()
+        prompt["category"] = category
+    print("프롬프트가 수정되었습니다!")
+
+
+def delete_prompt():
+    print("\n=== 프롬프트 삭제 ===")
+    if not prompts:
+        print("등록된 프롬프트가 없습니다.")
+        return
+    print_prompts(prompts)
+    number = get_number("삭제할 번호: ", len(prompts))
+    if number is None:
+        return
+    title = prompts[number - 1]["title"]
+    if input(f"'{title}'을(를) 삭제할까요? (y/N): ").strip().lower() != "y":
+        print("삭제를 취소했습니다.")
+        return
+    prompts.pop(number - 1)
+    print("프롬프트가 삭제되었습니다.")
+
+
+def show_top():
+    print("\n=== 조회수 Top 목록 ===")
+    viewed = [p for p in prompts if p.get("views", 0) > 0]
+    if not viewed:
+        print("아직 조회된 프롬프트가 없습니다.")
+        return
+    ranked = sorted(viewed, key=lambda p: p["views"], reverse=True)[:5]
+    for i, p in enumerate(ranked, 1):
+        print(f"{i}. [{p['category']}] {p['title']} (조회 {p['views']}회)")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -242,6 +296,9 @@ def show_menu():
     print("8. JSON 저장")
     print("9. JSON 불러오기")
     print("10. Markdown 내보내기")
+    print("11. 프롬프트 수정")
+    print("12. 프롬프트 삭제")
+    print("13. 조회수 Top 목록")
     print("0. 종료")
 
 
@@ -272,6 +329,12 @@ def main():
             load_json()
         elif choice == "10":
             export_markdown()
+        elif choice == "11":
+            edit_prompt()
+        elif choice == "12":
+            delete_prompt()
+        elif choice == "13":
+            show_top()
         else:
             print("잘못된 입력입니다. 메뉴에 있는의 번호를 입력하세요.")
 
