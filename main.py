@@ -158,8 +158,10 @@ def toggle_favorite():
         return
     prompt = prompts[number - 1]
     prompt["favorite"] = not prompt["favorite"]
-    action = "추가" if prompt["favorite"] else "해제"
-    print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에서 {action}했습니다!")
+    if prompt["favorite"]:
+        print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에 추가했습니다!")
+    else:
+        print(f"'{prompt['title']}' 프롬프트를 즐겨찾기에서 해제했습니다!")
 
 
 def show_favorites():
