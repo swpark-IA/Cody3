@@ -69,3 +69,19 @@ prompts = [
 
 - 기능 단위로 커밋했습니다.
 - 목록 기능은 `feature/list`, 보너스는 `feature/json-export`, `feature/crud-views` 브랜치에서 개발해 `merge --no-ff`로 병합했습니다.
+
+## 실행 화면
+
+| 메뉴 / 잘못된 입력 | 프롬프트 추가 |
+|---|---|
+| ![메뉴](screenshots/01_menu.png) | ![추가](screenshots/02_add.png) |
+
+| 목록 / 카테고리별 조회 / 검색 | 상세 보기 / 즐겨찾기 |
+|---|---|
+| ![목록](screenshots/03_list_cat_search.png) | ![상세](screenshots/04_detail_fav.png) |
+
+### Git 그래프 (`git log --oneline --graph`)
+
+![git graph](screenshots/05_git_graph.png)
+
+> 위 이미지는 실제 프로그램 출력을 터미널 스타일로 렌더링한 것입니다.
