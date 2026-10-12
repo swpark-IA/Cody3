@@ -199,6 +199,25 @@ def load_json():
     print(f"{len(prompts)}개의 프롬프트를 불러왔습니다.")
 
 
+def export_markdown():
+    """카테고리별로 exports/<카테고리>.md 파일을 만든다."""
+    if not prompts:
+        print("내보낼 프롬프트가 없습니다.")
+        return
+    EXPORT_DIR.mkdir(exist_ok=True)
+    grouped = {}
+    for p in prompts:
+        grouped.setdefault(p["category"], []).append(p)
+    for category, items in grouped.items():
+        lines = [f"# {category}", ""]
+        for p in items:
+            star = " ⭐" if p["favorite"] else ""
+            lines += [f"## {p['title']}{star}", "", p["content"], ""]
+        filename = category.replace("/", "_").replace("\\", "_") + ".md"
+        (EXPORT_DIR / filename).write_text("\n".join(lines), encoding="utf-8")
+    print(f"{len(grouped)}개의 Markdown 파일을 {EXPORT_DIR}/ 에 내보냈습니다.")
+
+
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -239,6 +258,8 @@ def main():
             save_json()
         elif choice == "9":
             load_json()
+        elif choice == "10":
+            export_markdown()
         else:
             print("잘못된 입력입니다. 메뉴에 있는의 번호를 입력하세요.")
 
